@@ -222,24 +222,24 @@ jobs:
 
   build-mac:
     name: build-mac
-    runs-on: macos-13
-
+    runs-on: macos-14 # Update to use macOS Sonoma runner which is ARM64-based
+  
     steps:
       - uses: actions/checkout@main
         with:
           submodules: 'recursive'
-
+  
       - name: Cache Dependencies
         uses: actions/cache@main
         with:
           path: /Users/runner/Library/Caches/Homebrew
-          key: ${{ runner.os }}-deps-cache
-
+          key: ${{ runner.os }}-arm64-deps-cache # Updated for ARM64
+  
       - name: Install Dependencies
         run: |
           brew cleanup
           brew install qt@5
-
+  
       - name: Build
         run: |
           mkdir build
@@ -248,6 +248,7 @@ jobs:
            -DCMAKE_C_COMPILER=/usr/bin/clang \
            -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
            -DCMAKE_BUILD_TYPE=Release \
+           -DCMAKE_OSX_ARCHITECTURES=arm64 \
            -DLauncher_NOTIFICATION_URL:STRING=https://files.multimc.org/notifications.json \
            -DCMAKE_INSTALL_PREFIX:PATH="/Users/runner/work/UltimMC/build/dist" \
            -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)/lib/cmake" \
@@ -256,9 +257,9 @@ jobs:
            -DLauncher_PASTE_EE_API_KEY:STRING=utLvciUouSURFzfjPxLBf5W4ISsUX4pwBDF7N1AfZ \
            -DLauncher_ANALYTICS_ID:STRING=UA-87731965-2 \
            -DLauncher_LAYOUT=mac-bundle \
-           -DLauncher_BUILD_PLATFORM=osx64-5.15.2 \
+           -DLauncher_BUILD_PLATFORM=osxarm64-5.15.2 \
            -DLauncher_BUG_TRACKER_URL=https://github.com/UltimMC/Launcher/issues \
-           -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 \
+           -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
            -DLauncher_EMBED_SECRETS=On \
            $GITHUB_WORKSPACE
 
